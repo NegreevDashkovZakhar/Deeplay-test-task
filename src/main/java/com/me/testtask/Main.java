@@ -10,6 +10,10 @@ public class Main {
      * @param args given arguments to application(will not be used)
      */
     public static void main(String[] args) {
-
+        try {
+            System.out.println(Solution.getResult("STWSWTPPTPTTPWPP", "Human"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

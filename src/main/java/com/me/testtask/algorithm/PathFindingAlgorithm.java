@@ -1,5 +1,7 @@
 package com.me.testtask.algorithm;
 
+import com.me.testtask.algorithm.exception.UnknownFieldNameException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +33,7 @@ public class PathFindingAlgorithm {
      *
      * @return the cost of moving from top left corner to bottom right corner of the map
      */
-    public int getPathLength() {
+    public int getPathLength() throws UnknownFieldNameException {
         //already visited positions
         this.usedPositions = new ArrayList<>();
         //positions that are used to expand search span. Hold cost spent from the top left corner
@@ -98,10 +100,14 @@ public class PathFindingAlgorithm {
         return END_POSITION.equals(position);
     }
 
-    private void tryAddNewDot(Position position, int lastDotDistance) {
+    private void tryAddNewDot(Position position, int lastDotDistance) throws UnknownFieldNameException {
         if (!usedPositions.contains(position)) {
-            int newDotDistance = lastDotDistance + walkingTimeMap.get(map[position.getY()].charAt(position.getX()));
-            currentPositions.add(new VisitedPosition(position, newDotDistance));
+            try {
+                int newDotDistance = lastDotDistance + walkingTimeMap.get(map[position.getY()].charAt(position.getX()));
+                currentPositions.add(new VisitedPosition(position, newDotDistance));
+            } catch (Exception e) {
+                throw new UnknownFieldNameException();
+            }
         }
     }
 }

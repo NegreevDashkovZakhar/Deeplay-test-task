@@ -1,9 +1,12 @@
 package com.me.testtask;
 
 import com.me.testtask.algorithm.PathFindingAlgorithm;
+import com.me.testtask.algorithm.exception.CreatureNotFoundException;
+import com.me.testtask.creatures.CreatureLoader;
 import com.me.testtask.creatures.Human;
 import com.me.testtask.creatures.ICreature;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,17 +23,31 @@ public class Solution {
      * grid
      */
     public static int getResult(final String map, final String creatureName) {
-        String[] squareMap = new String[4];
-        for (int i = 0; i < squareMap.length; i++) {
-            squareMap[i] = map.substring(i * 4, i * 4 + 4);
-            System.out.println(squareMap[i]);
-        }
+        try {
+            String[] squareMap = new String[4];
+            for (int i = 0; i < squareMap.length; i++) {
+                squareMap[i] = map.substring(i * 4, i * 4 + 4);
+                System.out.println(squareMap[i]);
+            }
 
-        Map<String, ICreature> creatureMap = new HashMap<>();
-        creatureMap.put("Human", new Human());
-        ICreature creature = creatureMap.get(creatureName);
-        Map<Character, Integer> walkingTimeMap = creature.getWalkingTimeMap();
-        PathFindingAlgorithm algorithm = new PathFindingAlgorithm(squareMap, walkingTimeMap);
-        return algorithm.getPathLength();
+            Map<String, ICreature> creatureMap;
+            try {
+                String defaultFileName = "creatures.txt";
+                creatureMap = CreatureLoader.loadCreatures(defaultFileName);
+            } catch (FileNotFoundException e) {
+                creatureMap = new HashMap<>();
+                creatureMap.put("Human", new Human());
+            }
+            if (!creatureMap.containsKey(creatureName)) {
+                throw new CreatureNotFoundException();
+            }
+            ICreature creature = creatureMap.get(creatureName);
+            Map<Character, Integer> walkingTimeMap = creature.getWalkingTimeMap();
+
+            PathFindingAlgorithm algorithm = new PathFindingAlgorithm(squareMap, walkingTimeMap);
+            return algorithm.getPathLength();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Illegal argument was given", e);
+        }
     }
 }
