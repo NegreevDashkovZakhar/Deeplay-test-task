@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class PathFindingAlgorithm {
     private static final Position END_POSITION = new Position(3, 3);
-    private List<VisitedPosition> currentDots;
+    private List<VisitedPosition> currentPositions;
     private List<Position> usedPositions;
     private final Map<Character, Integer> walkingTimeMap;
     private final String[] map;
@@ -32,45 +32,47 @@ public class PathFindingAlgorithm {
      * @return the cost of moving from top left corner to bottom right corner of the map
      */
     public int getPathLength() {
+        //already visited positions
         this.usedPositions = new ArrayList<>();
-        this.currentDots = new ArrayList<>();
-        currentDots.add(new VisitedPosition(0, 0, 0));
+        //positions that are used to expand search span. Hold cost spent from the top left corner
+        this.currentPositions = new ArrayList<>();
+        currentPositions.add(new VisitedPosition(0, 0, 0));
         int result;
         while (true) {
-            VisitedPosition bestVisited = getBestVisitedDot(currentDots);
-            Position bestPositionPosition = bestVisited.getPosition();
-            if (isFinish(bestPositionPosition)) {
+            VisitedPosition bestVisited = getBestVisitedDot(currentPositions);
+            Position bestVisitedPosition = bestVisited.getPosition();
+            if (isFinish(bestVisitedPosition)) {
                 result = bestVisited.getDistance();
                 break;
             }
-            currentDots.remove(bestVisited);
-            usedPositions.add(bestPositionPosition);
+            currentPositions.remove(bestVisited);
+            usedPositions.add(bestVisitedPosition);
 
             int bestDotDistance = bestVisited.getDistance();
             int bestDotX = bestVisited.getX();
             int bestDotY = bestVisited.getY();
 
             if (bestDotX > 0) {
-                //add to left
-                Position newPositionPosition = bestPositionPosition.clone();
+                //add position to left
+                Position newPositionPosition = bestVisitedPosition.clone();
                 newPositionPosition.moveLeft();
                 tryAddNewDot(newPositionPosition, bestDotDistance);
             }
             if (bestDotX < 3) {
-                //add to right
-                Position newPositionPosition = bestPositionPosition.clone();
+                //add position to right
+                Position newPositionPosition = bestVisitedPosition.clone();
                 newPositionPosition.moveRight();
                 tryAddNewDot(newPositionPosition, bestDotDistance);
             }
             if (bestDotY > 0) {
-                //add to top
-                Position newPositionPosition = bestPositionPosition.clone();
+                //add position to top
+                Position newPositionPosition = bestVisitedPosition.clone();
                 newPositionPosition.moveUp();
                 tryAddNewDot(newPositionPosition, bestDotDistance);
             }
             if (bestDotY < 3) {
-                //add to bottom
-                Position newPositionPosition = bestPositionPosition.clone();
+                //add position to bottom
+                Position newPositionPosition = bestVisitedPosition.clone();
                 newPositionPosition.moveDown();
                 tryAddNewDot(newPositionPosition, bestDotDistance);
             }
@@ -99,7 +101,7 @@ public class PathFindingAlgorithm {
     private void tryAddNewDot(Position position, int lastDotDistance) {
         if (!usedPositions.contains(position)) {
             int newDotDistance = lastDotDistance + walkingTimeMap.get(map[position.getY()].charAt(position.getX()));
-            currentDots.add(new VisitedPosition(position, newDotDistance));
+            currentPositions.add(new VisitedPosition(position, newDotDistance));
         }
     }
 }
