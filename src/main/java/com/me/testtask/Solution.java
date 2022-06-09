@@ -27,7 +27,6 @@ public class Solution {
             String[] squareMap = new String[4];
             for (int i = 0; i < squareMap.length; i++) {
                 squareMap[i] = map.substring(i * 4, i * 4 + 4);
-                System.out.println(squareMap[i]);
             }
 
             Map<String, ICreature> creatureMap;
